@@ -1,11 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/repositories/auth_repository.dart';
+import '../../data/repositories/catalog_repository.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../data/services/auth_service.dart';
+import '../../data/services/catalog_service.dart';
 import '../../data/services/profile_service.dart';
 import '../../data/services/token_storage_service.dart';
 import '../../features/auth/presentation/view_models/auth_view_model.dart';
+import '../../features/catalog/presentation/view_models/event_detail_view_model.dart';
+import '../../features/catalog/presentation/view_models/event_list_view_model.dart';
 import '../../features/profile/presentation/view_models/profile_view_model.dart';
 
 final tokenStorageServiceProvider = Provider<TokenStorageService>((ref) {
@@ -18,6 +22,10 @@ final authServiceProvider = Provider<AuthService>((ref) {
 
 final profileServiceProvider = Provider<ProfileService>((ref) {
   return ProfileService();
+});
+
+final catalogServiceProvider = Provider<CatalogService>((ref) {
+  return CatalogService();
 });
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -34,6 +42,10 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   );
 });
 
+final catalogRepositoryProvider = Provider<CatalogRepository>((ref) {
+  return CatalogRepository(catalogService: ref.read(catalogServiceProvider));
+});
+
 final authViewModelProvider = ChangeNotifierProvider<AuthViewModel>((ref) {
   return AuthViewModel(ref.read(authRepositoryProvider));
 });
@@ -43,3 +55,14 @@ final profileViewModelProvider = ChangeNotifierProvider<ProfileViewModel>((
 ) {
   return ProfileViewModel(ref.read(profileRepositoryProvider));
 });
+
+final eventListViewModelProvider = ChangeNotifierProvider<EventListViewModel>((
+  ref,
+) {
+  return EventListViewModel(ref.read(catalogRepositoryProvider));
+});
+
+final eventDetailViewModelProvider =
+    ChangeNotifierProvider<EventDetailViewModel>((ref) {
+      return EventDetailViewModel(ref.read(catalogRepositoryProvider));
+    });
