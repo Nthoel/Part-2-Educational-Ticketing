@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/providers/app_providers.dart';
 import '../../../../shared/widgets/neo_brutal_card.dart';
+import '../../../auth/presentation/views/login_screen.dart';
+import '../../../profile/presentation/views/profile_screen.dart';
 import 'event_detail_screen.dart';
 
 class EventListScreen extends ConsumerStatefulWidget {
@@ -51,7 +53,29 @@ class _EventListScreenState extends ConsumerState<EventListScreen> {
     final vm = ref.watch(eventListViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Katalog Event')),
+      appBar: AppBar(
+        title: const Text('Katalog Event'),
+        actions: [
+          IconButton(
+            tooltip: 'Login',
+            onPressed: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const LoginScreen()));
+            },
+            icon: const Icon(Icons.login),
+          ),
+          IconButton(
+            tooltip: 'Profil',
+            onPressed: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
+            },
+            icon: const Icon(Icons.person),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [

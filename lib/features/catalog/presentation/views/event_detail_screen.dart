@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/providers/app_providers.dart';
 import '../../../../shared/widgets/neo_brutal_card.dart';
+import '../../../orders/presentation/views/order_detail_screen.dart';
 
 class EventDetailScreen extends ConsumerStatefulWidget {
   const EventDetailScreen({required this.eventId, super.key});
@@ -16,6 +17,50 @@ class EventDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
+  final Map<int, int> _quantities = {};
+
+  int _getQty(int ticketTypeId) => _quantities[ticketTypeId] ?? 1;
+
+  void _incQty(int ticketTypeId, int remaining) {
+    final current = _getQty(ticketTypeId);
+    if (current >= remaining) return;
+    setState(() => _quantities[ticketTypeId] = current + 1);
+  }
+
+  void _decQty(int ticketTypeId) {
+    final current = _getQty(ticketTypeId);
+    if (current <= 1) return;
+    setState(() => _quantities[ticketTypeId] = current - 1);
+  }
+
+  Future<void> _buyTicket({
+    required int ticketTypeId,
+    required int quantity,
+  }) async {
+    final vm = ref.read(createOrderViewModelProvider);
+    final order = await vm.createOrder(
+      ticketTypeId: ticketTypeId,
+      quantity: quantity,
+    );
+
+    if (!mounted) return;
+
+    if (order == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(vm.errorMessage ?? 'Gagal membuat pesanan')),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Pesanan ${order.orderCode} berhasil dibuat')),
+    );
+
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => OrderDetailScreen(orderId: order.id)),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -137,6 +182,66 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                                   ),
                                   Text(
                                     'Sisa: ${ticket.remainingQuantity} / Kuota: ${ticket.quota}',
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: ticket.remainingQuantity <= 0
+                                            ? null
+                                            : () => _decQty(ticket.id),
+                                        icon: const Icon(Icons.remove),
+                                      ),
+                                      Text(
+                                        '${_getQty(ticket.id)}',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: ticket.remainingQuantity <= 0
+                                            ? null
+                                            : () => _incQty(
+                                                ticket.id,
+                                                ticket.remainingQuantity,
+                                              ),
+                                        icon: const Icon(Icons.add),
+                                      ),
+                                      const Spacer(),
+                                      SizedBox(
+                                        height: 42,
+                                        child: ElevatedButton(
+                                          onPressed:
+                                              ticket.remainingQuantity <= 0
+                                              ? null
+                                              : ref
+                                                    .watch(
+                                                      createOrderViewModelProvider,
+                                                    )
+                                                    .isLoading
+                                              ? null
+                                              : () => _buyTicket(
+                                                  ticketTypeId: ticket.id,
+                                                  quantity: _getQty(ticket.id),
+                                                ),
+                                          child:
+                                              ref
+                                                  .watch(
+                                                    createOrderViewModelProvider,
+                                                  )
+                                                  .isLoading
+                                              ? const SizedBox(
+                                                  height: 16,
+                                                  width: 16,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                      ),
+                                                )
+                                              : const Text('Beli'),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
