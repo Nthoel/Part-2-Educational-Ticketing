@@ -4,16 +4,19 @@ import '../../data/repositories/auth_repository.dart';
 import '../../data/repositories/catalog_repository.dart';
 import '../../data/repositories/order_repository.dart';
 import '../../data/repositories/profile_repository.dart';
+import '../../data/repositories/ticket_repository.dart';
 import '../../data/services/auth_service.dart';
 import '../../data/services/catalog_service.dart';
 import '../../data/services/order_service.dart';
 import '../../data/services/profile_service.dart';
+import '../../data/services/ticket_service.dart';
 import '../../data/services/token_storage_service.dart';
 import '../../features/auth/presentation/view_models/auth_view_model.dart';
 import '../../features/catalog/presentation/view_models/event_detail_view_model.dart';
 import '../../features/catalog/presentation/view_models/event_list_view_model.dart';
 import '../../features/orders/presentation/view_models/order_view_models.dart';
 import '../../features/profile/presentation/view_models/profile_view_model.dart';
+import '../../features/tickets/presentation/view_models/ticket_view_models.dart';
 
 final tokenStorageServiceProvider = Provider<TokenStorageService>((ref) {
   return TokenStorageService();
@@ -33,6 +36,10 @@ final catalogServiceProvider = Provider<CatalogService>((ref) {
 
 final orderServiceProvider = Provider<OrderService>((ref) {
   return OrderService();
+});
+
+final ticketServiceProvider = Provider<TicketService>((ref) {
+  return TicketService();
 });
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -55,6 +62,10 @@ final catalogRepositoryProvider = Provider<CatalogRepository>((ref) {
 
 final orderRepositoryProvider = Provider<OrderRepository>((ref) {
   return OrderRepository(orderService: ref.read(orderServiceProvider));
+});
+
+final ticketRepositoryProvider = Provider<TicketRepository>((ref) {
+  return TicketRepository(ticketService: ref.read(ticketServiceProvider));
 });
 
 final authViewModelProvider = ChangeNotifierProvider<AuthViewModel>((ref) {
@@ -92,4 +103,15 @@ final myOrdersViewModelProvider = ChangeNotifierProvider<MyOrdersViewModel>((
 final orderDetailViewModelProvider =
     ChangeNotifierProvider<OrderDetailViewModel>((ref) {
       return OrderDetailViewModel(ref.read(orderRepositoryProvider));
+    });
+
+final myTicketsViewModelProvider = ChangeNotifierProvider<MyTicketsViewModel>((
+  ref,
+) {
+  return MyTicketsViewModel(ref.read(ticketRepositoryProvider));
+});
+
+final ticketDetailViewModelProvider =
+    ChangeNotifierProvider<TicketDetailViewModel>((ref) {
+      return TicketDetailViewModel(ref.read(ticketRepositoryProvider));
     });
