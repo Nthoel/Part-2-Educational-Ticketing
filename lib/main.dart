@@ -3,24 +3,24 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
-import 'features/catalog/presentation/views/event_list_screen.dart';
+import 'features/splash/presentation/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
-  runApp(const ProviderScope(child: EducationalTicketingApp()));
+  runApp(const ProviderScope(child: FarasaApp()));
 }
 
-class EducationalTicketingApp extends StatelessWidget {
-  const EducationalTicketingApp({super.key});
+class FarasaApp extends StatelessWidget {
+  const FarasaApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Educational Ticketing',
+      title: 'FARASA',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: const EventListScreen(),
+      home: const SplashScreen(),
     );
   }
 }

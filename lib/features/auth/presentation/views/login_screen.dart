@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/app_providers.dart';
 import '../../../../shared/widgets/neo_brutal_card.dart';
-import '../../../profile/presentation/views/profile_screen.dart';
+import '../../../catalog/presentation/views/event_list_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -38,7 +38,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     if (ok) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const ProfileScreen()),
+        MaterialPageRoute(builder: (_) => const EventListScreen()),
       );
     } else {
       final msg = authVm.errorMessage ?? 'Login gagal';

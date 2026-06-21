@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/providers/app_providers.dart';
 import '../../../../shared/widgets/neo_brutal_card.dart';
-import '../../../auth/presentation/views/login_screen.dart';
 import '../../../profile/presentation/views/profile_screen.dart';
 import '../../../tickets/presentation/views/my_tickets_screen.dart';
 import 'event_detail_screen.dart';
@@ -28,6 +27,8 @@ class _EventListScreenState extends ConsumerState<EventListScreen> {
     'price_desc',
   ];
 
+  int _currentIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -49,43 +50,30 @@ class _EventListScreenState extends ConsumerState<EventListScreen> {
     super.dispose();
   }
 
+  void _onNavTapped(int index) {
+    if (index == _currentIndex) return;
+
+    setState(() {
+      _currentIndex = index;
+    });
+
+    if (index == 1) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const MyTicketsScreen()),
+      );
+    } else if (index == 2) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const ProfileScreen()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = ref.watch(eventListViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Katalog Event'),
-        actions: [
-          IconButton(
-            tooltip: 'Login',
-            onPressed: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const LoginScreen()));
-            },
-            icon: const Icon(Icons.login),
-          ),
-          IconButton(
-            tooltip: 'Tiket Saya',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const MyTicketsScreen()),
-              );
-            },
-            icon: const Icon(Icons.confirmation_num),
-          ),
-          IconButton(
-            tooltip: 'Profil',
-            onPressed: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
-            },
-            icon: const Icon(Icons.person),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Katalog Event')),
       body: SafeArea(
         child: Column(
           children: [
@@ -224,6 +212,27 @@ class _EventListScreenState extends ConsumerState<EventListScreen> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: _onNavTapped,
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.storefront_outlined),
+            selectedIcon: Icon(Icons.storefront),
+            label: 'Katalog',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.confirmation_num_outlined),
+            selectedIcon: Icon(Icons.confirmation_num),
+            label: 'Tiket',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: 'Profil',
+          ),
+        ],
       ),
     );
   }
